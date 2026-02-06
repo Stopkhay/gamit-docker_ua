@@ -1,0 +1,15 @@
+# GAMIT source files (must be downloaded during build)
+*.tar.gz
+*.tar.Z
+
+# Build artifacts
+*.o
+*.a
+
+# Temporary files
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
