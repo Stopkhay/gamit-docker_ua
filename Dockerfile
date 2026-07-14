@@ -42,19 +42,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /opt/gg
 
 # Download GAMIT source files
-RUN curl -u ${GG_USER}:${GG_PASSWORD} -O ftp://chandler.mit.edu/updates/source/gamit.10.71.tar.gz \
-    && curl -u ${GG_USER}:${GG_PASSWORD} -O ftp://chandler.mit.edu/updates/source/kf.10.71.tar.gz \
-    && curl -u ${GG_USER}:${GG_PASSWORD} -O ftp://chandler.mit.edu/updates/source/libraries.10.71.tar.gz \
-    && curl -u ${GG_USER}:${GG_PASSWORD} -O ftp://chandler.mit.edu/updates/source/com.10.71.tar.gz \
-    && curl -u ${GG_USER}:${GG_PASSWORD} -O ftp://chandler.mit.edu/updates/source/help.10.71.tar.gz \
-    && curl -u ${GG_USER}:${GG_PASSWORD} -O ftp://chandler.mit.edu/updates/source/tables.10.71.tar.gz
+RUN curl -k -u ${GG_USER}:${GG_PASSWORD} -O https://chandler.mit.edu/gps/source/gamit.10.71.tar.gz \
+    && curl -k -u ${GG_USER}:${GG_PASSWORD} -O https://chandler.mit.edu/gps/source/kf.10.71.tar.gz \
+    && curl -k -u ${GG_USER}:${GG_PASSWORD} -O https://chandler.mit.edu/gps/source/libraries.10.71.tar.gz \
+    && curl -k -u ${GG_USER}:${GG_PASSWORD} -O https://chandler.mit.edu/gps/source/com.10.71.tar.gz \
+    && curl -k -u ${GG_USER}:${GG_PASSWORD} -O https://chandler.mit.edu/gps/source/help.10.71.tar.gz \
+    && curl -k -u ${GG_USER}:${GG_PASSWORD} -O https://chandler.mit.edu/gps/source/tables.10.71.tar.gz
 
 # Extract all archives
 RUN for f in *.tar.gz; do tar -xzf $f; done && rm -f *.tar.gz
 
 # Download and apply incremental updates
-RUN LATEST_UPDATE=$(curl -s -u ${GG_USER}:${GG_PASSWORD} ftp://chandler.mit.edu/updates/source/ | grep "incremental_updates" | grep ".tar.gz" | tail -1 | awk '{print $NF}') \
-    && curl -u ${GG_USER}:${GG_PASSWORD} -O ftp://chandler.mit.edu/updates/source/${LATEST_UPDATE} \
+RUN LATEST_UPDATE=$(curl -k -s -u ${GG_USER}:${GG_PASSWORD} https://chandler.mit.edu/gps/source/ | grep -o 'href="[^"]*"' | sed 's/href="//;s/"//' \
+    | grep "incremental_updates" | grep ".tar.gz" | tail -1 | awk '{print $NF}') \
+    && curl -k -u ${GG_USER}:${GG_PASSWORD} -O https://chandler.mit.edu/gps/source/${LATEST_UPDATE} \
     && tar -xzf ${LATEST_UPDATE} && rm -f ${LATEST_UPDATE}
 
 # Copy build script
